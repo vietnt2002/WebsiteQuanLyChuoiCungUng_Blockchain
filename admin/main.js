@@ -207,3 +207,21 @@ function loadDanhMucSanPham() {
 loadDanhMucSanPham();
 loadDanhSachSanPham();
 
+
+function logout() {
+    // Xóa thông tin người dùng từ localStorage
+    localStorage.removeItem('username');
+    localStorage.removeItem('walletAddress');
+    
+    // Chuyển hướng về trang đăng nhập hoặc trang chủ
+    window.location.href = '../index.html'; // Thay đổi đường dẫn nếu cần
+}
+
+// Đảm bảo rằng DOM đã được tải hoàn toàn trước khi thêm sự kiện
+document.addEventListener('DOMContentLoaded', () => {
+    // Lấy nút logout và gán sự kiện click
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+});

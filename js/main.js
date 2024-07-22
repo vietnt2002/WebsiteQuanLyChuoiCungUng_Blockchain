@@ -200,5 +200,5 @@ function logout() {
     localStorage.removeItem('username');
     localStorage.removeItem('walletAddress');
     // Chuyển hướng về trang đăng nhập hoặc trang chủ
-    window.location.href = '/auth/login.html';
+    window.location.href = '../index.html';
 }
