@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerUser(email, externalWalletAddress, referenceId);
     });
 });
+
 function registerUser(email, externalWalletAddress, referenceId) {
     const options = {
         method: 'POST',

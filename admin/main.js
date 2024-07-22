@@ -1,5 +1,5 @@
 
-var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJiMWIwNWFjNC1jNTUxLTQ2NjctYjk2OS0zZDZjZjkzZGQ0NjEiLCJzdWIiOiJiNTdhMjg1Ni1hMDU2LTQ3YjItYjc2Mi02YzFmZDVlOGJlNDQiLCJpYXQiOjE3MjEzMTkxNjJ9.lex6kIBaEIrQbiRzGNDvvQDZw1trjOy817GZ0se5inI";
+var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
 const options = {
     method: 'GET',
     headers: {
@@ -75,7 +75,7 @@ function mintNft() {
                 imageUrl: fileInput,
                 name: tenSanPham
             },
-            destinationUserReferenceId: '1'
+            destinationUserReferenceId: 'admin'
         })
     };
 
@@ -99,84 +99,99 @@ function mintNft() {
 
 
 //Hiển thị table danh sách sản phẩm
-function loadDanhSachSanPham() {
-        fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
-            .then(response => response.json())
-            .then(response => {
-                console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
+document.addEventListener('DOMContentLoaded', () => {
+    const API_URL = 'https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1';
+    const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8';
 
-                const productContainer = document.getElementById('productContainer').querySelector('.row');
-                productContainer.innerHTML = ''; // Xóa nội dung cũ
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            'x-api-key': API_KEY
+        }
+    };
 
-                response.data.forEach(entry => {
-                    if (entry.type === "UniqueAsset") {
-                        const item = entry.item;
+    fetch(API_URL, options)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
 
-                        // Tạo thẻ card
-                        const colDiv = document.createElement('div');
-                        colDiv.className = 'col-md-6 col-lg-4 col-xl-3';
+            const productTableBody = document.getElementById('productTableBody');
+            productTableBody.innerHTML = ''; // Xóa nội dung cũ
 
-                        const cardDiv = document.createElement('div');
-                        cardDiv.className = 'rounded position-relative fruite-item';
+            response.data.forEach(entry => {
+                if (entry.type === "UniqueAsset") {
+                    const item = entry.item;
 
-                        const imgDiv = document.createElement('div');
-                        imgDiv.className = 'fruite-img';
+                    const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
+                    const quantity = soLuongAttribute ? soLuongAttribute.value : 'N/A';
 
-                        const img = document.createElement('img');
-                        img.src = item.imageUrl || 'img/fruite-item-5.jpg';
-                        img.className = 'img-fluid w-100 rounded-top';
-                        img.alt = item.name || 'Image';
-                        imgDiv.appendChild(img);
+                    const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
+                    const price = giaTienAttribute ? giaTienAttribute.value : 'N/A';
 
-                        const categoryDiv = document.createElement('div');
-                        categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
-                        categoryDiv.style.top = '10px';
-                        categoryDiv.style.left = '10px';
-                        categoryDiv.textContent = item.collection.name || 'Fruits';
-                        cardDiv.appendChild(categoryDiv);
+                    const row = document.createElement('tr');
 
-                        const contentDiv = document.createElement('div');
-                        contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom';
+                    const imgTd = document.createElement('td');
+                    imgTd.className = 'img-center'; // Đặt class để căn giữa
+                    const img = document.createElement('img');
+                    img.src = item.imageUrl || 'img/fruite-item-5.jpg';
+                    img.alt = item.name || 'Image';
+                    imgTd.appendChild(img);
 
-                        const itemName = document.createElement('h4');
-                        itemName.textContent = item.name || 'Unknown Item';
-                        contentDiv.appendChild(itemName);
+                    const nameTd = document.createElement('td');
+                    nameTd.className = 'text-center';
+                    nameTd.textContent = item.name || 'Unknown Item';
 
-                        const itemDescription = document.createElement('p');
-                        itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
-                        contentDiv.appendChild(itemDescription);
+                    const descriptionTd = document.createElement('td');
+                    descriptionTd.className = 'text-center';
+                    descriptionTd.textContent = item.description || 'Không có mô tả';
 
-                        const dFlexDiv = document.createElement('div');
-                        dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
+                    const quantityTd = document.createElement('td');
+                    quantityTd.className = 'text-center';
+                    quantityTd.textContent = quantity;
 
-                        const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
-                        const quantity = soLuongAttribute ? soLuongAttribute.value : 'N/A';
+                    const priceTd = document.createElement('td');
+                    priceTd.className = 'text-center';
+                    priceTd.textContent = price;
 
-                        const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
-                        const price = giaTienAttribute ? giaTienAttribute.value : '$4.99 / kg';
+                    const actionTd = document.createElement('td');
+                    actionTd.className = 'text-center';
+                    const actionDiv = document.createElement('div');
+                    actionDiv.className = 'action-btns';
 
-                        const priceP = document.createElement('p');
-                        priceP.className = 'text-dark fs-5 fw-bold mb-0';
-                        priceP.textContent = `${price} / ${quantity}`;
-                        dFlexDiv.appendChild(priceP);
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-warning';
+                    editBtn.innerHTML = '<i class="fa fa-edit"></i>';
+                    editBtn.addEventListener('click', () => {
+                        // Thêm hành động sửa sản phẩm ở đây
+                        alert(`Chỉnh sửa ${item.name}`);
+                    });
 
-                        const addToCartA = document.createElement('a');
-                        addToCartA.href = '#';
-                        addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
-                        addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart';
-                        dFlexDiv.appendChild(addToCartA);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.innerHTML = '<i class="fa fa-trash"></i>';
+                    deleteBtn.addEventListener('click', () => {
+                        // Thêm hành động xóa sản phẩm ở đây
+                        alert(`Xóa ${item.name}`);
+                    });
 
-                        contentDiv.appendChild(dFlexDiv);
-                        cardDiv.appendChild(imgDiv);
-                        cardDiv.appendChild(contentDiv);
-                        colDiv.appendChild(cardDiv);
-                        productContainer.appendChild(colDiv);
-                    }
-                });
-            })
-            .catch(err => console.error(err));
-    }
+                    actionDiv.appendChild(editBtn);
+                    actionDiv.appendChild(deleteBtn);
+                    actionTd.appendChild(actionDiv);
 
+                    row.appendChild(imgTd);
+                    row.appendChild(nameTd);
+                    row.appendChild(descriptionTd);
+                    row.appendChild(quantityTd);
+                    row.appendChild(priceTd);
+                    row.appendChild(actionTd);
+
+                    productTableBody.appendChild(row);
+                }
+            });
+        })
+        .catch(err => console.error(err));
+});
 
 //Hiển thị danh mục sản phẩm
 function loadDanhMucSanPham() {
@@ -203,11 +218,6 @@ function loadDanhMucSanPham() {
     });
 }
 
-
-loadDanhMucSanPham();
-loadDanhSachSanPham();
-
-
 function logout() {
     // Xóa thông tin người dùng từ localStorage
     localStorage.removeItem('username');
@@ -216,12 +226,3 @@ function logout() {
     // Chuyển hướng về trang đăng nhập hoặc trang chủ
     window.location.href = '../index.html'; // Thay đổi đường dẫn nếu cần
 }
-
-// Đảm bảo rằng DOM đã được tải hoàn toàn trước khi thêm sự kiện
-document.addEventListener('DOMContentLoaded', () => {
-    // Lấy nút logout và gán sự kiện click
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', logout);
-    }
-});
