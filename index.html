@@ -81,8 +81,8 @@
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
                             </a>
-                            <a href="/auth/login.html" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
+                            <a id="authLinks">
+                                <!-- Links will be updated by JavaScript -->
                             </a>
                         </div>
                     </div>
@@ -1209,90 +1209,6 @@
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
-
-    <script>
-       function loadDanhSachSanPham() {
-            fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
-                .then(response => response.json())
-                .then(response => {
-                    console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
-
-                    const productContainer = document.getElementById('productContainer').querySelector('.row');
-                    productContainer.innerHTML = ''; // Xóa nội dung cũ
-
-                    response.data.forEach(entry => {
-                        if (entry.type === "UniqueAsset") {
-                            const item = entry.item;
-
-                            // Tạo thẻ card
-                            const colDiv = document.createElement('div');
-                            colDiv.className = 'col-md-6 col-lg-4 col-xl-3';
-
-                            const cardDiv = document.createElement('div');
-                            cardDiv.className = 'rounded position-relative fruite-item';
-
-                            const imgDiv = document.createElement('div');
-                            imgDiv.className = 'fruite-img';
-
-                            const img = document.createElement('img');
-                            img.src = item.imageUrl || 'img/fruite-item-5.jpg';
-                            img.className = 'img-fluid w-100 rounded-top';
-                            img.alt = item.name || 'Image';
-                            imgDiv.appendChild(img);
-
-                            const categoryDiv = document.createElement('div');
-                            categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
-                            categoryDiv.style.top = '10px';
-                            categoryDiv.style.left = '10px';
-                            categoryDiv.textContent = item.collection.name || 'Fruits';
-                            cardDiv.appendChild(categoryDiv);
-
-                            const contentDiv = document.createElement('div');
-                            contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom';
-
-                            const itemName = document.createElement('h4');
-                            itemName.textContent = item.name || 'Unknown Item';
-                            contentDiv.appendChild(itemName);
-
-                            const itemDescription = document.createElement('p');
-                            itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
-                            contentDiv.appendChild(itemDescription);
-
-                            const dFlexDiv = document.createElement('div');
-                            dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
-
-                            const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
-                            const quantity = soLuongAttribute ? soLuongAttribute.value : 'N/A';
-
-                            const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
-                            const price = giaTienAttribute ? giaTienAttribute.value : '$4.99 / kg';
-
-                            const priceP = document.createElement('p');
-                            priceP.className = 'text-dark fs-5 fw-bold mb-0';
-                            priceP.textContent = `${price} / ${quantity}`;
-                            dFlexDiv.appendChild(priceP);
-
-                            const addToCartA = document.createElement('a');
-                            addToCartA.href = '#';
-                            addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
-                            addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart';
-                            dFlexDiv.appendChild(addToCartA);
-
-                            contentDiv.appendChild(dFlexDiv);
-                            cardDiv.appendChild(imgDiv);
-                            cardDiv.appendChild(contentDiv);
-                            colDiv.appendChild(cardDiv);
-                            productContainer.appendChild(colDiv);
-                        }
-                    });
-                })
-                .catch(err => console.error(err));
-        }
-        
-
-loadDanhSachSanPham();
-    </script>
-    </body>
+    <script src="js/main.js"></script></body>
 
 </html>

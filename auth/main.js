@@ -75,6 +75,7 @@ const API_URL = 'https://api.gameshift.dev/nx/users/';
                 
                 // Lưu địa chỉ ví vào localStorage
                 localStorage.setItem('walletAddress', data.address);
+                localStorage.setItem('username', username)
 
                 // Chuyển hướng đến trang chủ
                 window.location.href = '../index.html'; // Thay đổi đường dẫn nếu cần
