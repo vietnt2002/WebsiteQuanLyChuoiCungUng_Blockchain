@@ -149,3 +149,56 @@
 
 })(jQuery);
 
+//new
+document.addEventListener('DOMContentLoaded', () => {
+    const authLinksContainer = document.getElementById('authLinks');
+    
+    const walletAddress = localStorage.getItem('walletAddress');
+    const userMenu = document.createElement('div');
+    
+    if (walletAddress) {
+        userMenu.innerHTML = `
+            <a href="#" id="userIcon" class="my-auto">
+                <i class="fas fa-user fa-2x"></i>
+            </a>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a href="/account.html">Thông tin tài khoản</a>
+                <a href="#" id="logout">Đăng xuất</a>
+            </div>
+        `;
+
+        authLinksContainer.appendChild(userMenu);
+
+        const userIcon = document.getElementById('userIcon');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const logoutButton = document.getElementById('logout');
+
+        userIcon.addEventListener('click', (event) => {
+            event.preventDefault();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        logoutButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            logout();
+        });
+    } else {
+        authLinksContainer.innerHTML = `
+            <span>
+              <a href="../auth/login.html" class="auth-link">Đăng nhập</a>
+            </span>
+            /
+            <span>
+              <a href="../auth/register.html" class="auth-link">Đăng ký</a>
+            </span>
+        `;
+    }
+});
+
+function logout() {
+    // Xóa thông tin người dùng từ localStorage
+    localStorage.removeItem('username');
+    localStorage.removeItem('walletAddress');
+    // Chuyển hướng về trang đăng nhập hoặc trang chủ
+    window.location.href = '../index.html';
+}
