@@ -149,6 +149,7 @@
 
 })(jQuery);
 
+//new
 document.addEventListener('DOMContentLoaded', () => {
     const authLinksContainer = document.getElementById('authLinks');
     
@@ -183,19 +184,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         authLinksContainer.innerHTML = `
-            <a href="/auth/login.html" class="my-auto">
-                <span>Đăng nhập</span>/<span>Đăng ký</span>
-            </a>
+            <span>
+              <a href="../auth/login.html" class="auth-link">Đăng nhập</a>
+            </span>
+            /
+            <span>
+              <a href="../auth/register.html" class="auth-link">Đăng ký</a>
+            </span>
         `;
     }
 });
 
 function logout() {
     // Xóa thông tin người dùng từ localStorage
-    localStorage.removeItem('phantomPublicKey');
-    localStorage.removeItem('balance');
+    localStorage.removeItem('username');
     localStorage.removeItem('walletAddress');
-    localStorage.removeItem('publicKey');
     // Chuyển hướng về trang đăng nhập hoặc trang chủ
     window.location.href = '/auth/login.html';
 }
