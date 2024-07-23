@@ -1,53 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+< <head>
+    <meta charset="utf-8">
+    <title>Fruitables - Vegetable Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
 
-    <script src="https://cdn.jsdelivr.net/npm/base-58@0.0.1/Base58.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-storage.js"></script>
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
 
-    <style>
-        .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-.card {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    width: 200px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-}
+    <!-- Libraries Stylesheet -->
+    <link href="../lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="../lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-.card img {
-    width: 100%;
-    height: auto;
-}
 
-.card-content {
-    padding: 10px;
-}
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
-.card-content h3,
-.card-content p {
-    margin: 0;
-    padding: 5px 0;
-}
-
-    </style>
-
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -124,7 +103,7 @@
         console.log(publicKey);
     }
 
-    var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJiMWIwNWFjNC1jNTUxLTQ2NjctYjk2OS0zZDZjZjkzZGQ0NjEiLCJzdWIiOiJiNTdhMjg1Ni1hMDU2LTQ3YjItYjc2Mi02YzFmZDVlOGJlNDQiLCJpYXQiOjE3MjEzMTkxNjJ9.lex6kIBaEIrQbiRzGNDvvQDZw1trjOy817GZ0se5inI";
+    var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
     const options = {
         method: 'GET',
         headers: {
@@ -225,47 +204,83 @@
 
     //Hiển thị table danh sách sản phẩm
     function loadDanhSachSanPham() {
-        fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
-            .then(response => response.json())
-            .then(response => {
-                console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
+            fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
+                .then(response => response.json())
+                .then(response => {
+                    console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
 
-                const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
-                tableBody.innerHTML = '';
-                response.data.forEach(entry => {
-                    if (entry.type === "UniqueAsset") {
-                        const item = entry.item;
-                        const row = tableBody.insertRow();
+                    const productContainer = document.getElementById('productContainer').querySelector('.row');
+                    productContainer.innerHTML = ''; // Xóa nội dung cũ
 
-                        const imageCell = row.insertCell(0);
-                        const collectionNameCell = row.insertCell(1);
-                        const itemNameCell = row.insertCell(2);
-                        const itemDescriptionCell = row.insertCell(3);
-                        const quantityCell = row.insertCell(4);
-                        const priceCell = row.insertCell(5);
+                    response.data.forEach(entry => {
+                        if (entry.type === "UniqueAsset") {
+                            const item = entry.item;
 
-                        collectionNameCell.textContent = item.collection.name || 'Unknown Collection'; // Tên Collection
-                        itemNameCell.textContent = item.name || 'Unknown Item'; // Tên Data
+                            // Tạo thẻ card
+                            const colDiv = document.createElement('div');
+                            colDiv.className = 'col-md-6 col-lg-4 col-xl-3';
 
-                        itemDescriptionCell.textContent = item.description || 'Unknown Description';
+                            const cardDiv = document.createElement('div');
+                            cardDiv.className = 'rounded position-relative fruite-item';
 
-                        const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
-                        quantityCell.textContent = soLuongAttribute ? soLuongAttribute.value : 'N/A'; // số lượng
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'fruite-img';
 
-                        const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
-                        priceCell.textContent = giaTienAttribute ? giaTienAttribute.value : 'N/A'; // Giá bán
+                            const img = document.createElement('img');
+                            img.src = item.imageUrl || 'img/fruite-item-5.jpg';
+                            img.className = 'img-fluid w-100 rounded-top';
+                            img.alt = item.name || 'Image';
+                            imgDiv.appendChild(img);
 
-                        const img = document.createElement('img');
-                        img.src = item.imageUrl || ''; // URL hình ảnh
-                        img.alt = item.name || 'Image';
-                        img.style.width = '150px';
-                        img.style.height = '150px';
-                        imageCell.appendChild(img);
-                    }
-                });
-            })
-            .catch(err => console.error(err));
-    }
+                            const categoryDiv = document.createElement('div');
+                            categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
+                            categoryDiv.style.top = '10px';
+                            categoryDiv.style.left = '10px';
+                            categoryDiv.textContent = item.collection.name || 'Fruits';
+                            cardDiv.appendChild(categoryDiv);
+
+                            const contentDiv = document.createElement('div');
+                            contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom';
+
+                            const itemName = document.createElement('h4');
+                            itemName.textContent = item.name || 'Unknown Item';
+                            contentDiv.appendChild(itemName);
+
+                            const itemDescription = document.createElement('p');
+                            itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
+                            contentDiv.appendChild(itemDescription);
+
+                            const dFlexDiv = document.createElement('div');
+                            dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
+
+                            const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
+                            const quantity = soLuongAttribute ? soLuongAttribute.value : ' ';
+
+                            const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
+                            const price = giaTienAttribute ? giaTienAttribute.value : ' ';
+
+                            const priceP = document.createElement('p');
+                            priceP.className = 'text-dark fs-5 fw-bold mb-0';
+                            priceP.textContent = `${price} / ${quantity}`;
+                            dFlexDiv.appendChild(priceP);
+
+                            const addToCartA = document.createElement('a');
+                            addToCartA.href = '#';
+                            addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
+                            addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Pay';
+                            dFlexDiv.appendChild(addToCartA);
+
+                            contentDiv.appendChild(dFlexDiv);
+                            cardDiv.appendChild(imgDiv);
+                            cardDiv.appendChild(contentDiv);
+                            colDiv.appendChild(cardDiv);
+                            productContainer.appendChild(colDiv);
+                        }
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+
 
     //Hiển thị danh mục sản phẩm
     function loadDanhMucSanPham() {
