@@ -202,3 +202,116 @@ function logout() {
     // Chuyển hướng về trang đăng nhập hoặc trang chủ
     window.location.href = '../index.html';
 }
+
+//load san pham 
+
+var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            'x-api-key': apiKey
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        function loadDanhSachSanPham() {
+            fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
+                .then(response => response.json())
+                .then(response => {
+                    console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
+    
+                    const productContainer = document.getElementById('productContainer').querySelector('.row');
+                    productContainer.innerHTML = ''; // Xóa nội dung cũ
+    
+                    response.data.forEach(entry => {
+                        if (entry.type === "UniqueAsset") {
+                            const item = entry.item;
+    
+                            // Tạo thẻ card
+                            const colDiv = document.createElement('div');
+                            colDiv.className = 'col-md-6 col-lg-4 col-xl-3';
+    
+                            const cardDiv = document.createElement('div');
+                            cardDiv.className = 'rounded position-relative fruite-item';
+    
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'fruite-img';
+    
+                            const img = document.createElement('img');
+                            img.src = item.imageUrl || 'img/fruite-item-5.jpg';
+                            img.className = 'img-fluid w-100 rounded-top';
+                            img.alt = item.name || 'Image';
+                            imgDiv.appendChild(img);
+    
+                            const categoryDiv = document.createElement('div');
+                            categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
+                            categoryDiv.style.top = '10px';
+                            categoryDiv.style.left = '10px';
+                            categoryDiv.textContent = item.collection.name || 'Fruits';
+                            cardDiv.appendChild(categoryDiv);
+    
+                            const contentDiv = document.createElement('div');
+                            contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom product-details';
+    
+                            const itemName = document.createElement('h4');
+                            itemName.textContent = item.name || 'Unknown Item';
+                            contentDiv.appendChild(itemName);
+    
+                            const itemDescription = document.createElement('p');
+                            itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
+                            contentDiv.appendChild(itemDescription);
+    
+                            const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
+                            const quantity = soLuongAttribute ? soLuongAttribute.value : ' ';
+    
+                            const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
+                            const price = giaTienAttribute ? giaTienAttribute.value : ' ';
+    
+                            const priceP = document.createElement('p');
+                            priceP.className = 'price';
+                            priceP.textContent = `Price: ${price}`;
+                            contentDiv.appendChild(priceP);
+    
+                            const quantityP = document.createElement('p');
+                            quantityP.className = 'quantity';
+                            quantityP.textContent = `Quantity: ${quantity}`;
+                            contentDiv.appendChild(quantityP);
+    
+                            const dFlexDiv = document.createElement('div');
+                            dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
+    
+                            const addToCartA = document.createElement('a');
+                            addToCartA.href = '#';
+                            addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
+                            addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Pay';
+                            addToCartA.setAttribute('data-bs-toggle', 'modal');
+                            addToCartA.setAttribute('data-bs-target', '#purchaseModal');
+                            dFlexDiv.appendChild(addToCartA);
+    
+                            contentDiv.appendChild(dFlexDiv);
+                            cardDiv.appendChild(imgDiv);
+                            cardDiv.appendChild(contentDiv);
+                            colDiv.appendChild(cardDiv);
+                            productContainer.appendChild(colDiv);
+                        }
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+    
+        loadDanhSachSanPham();
+    });
+    
+    // Handle form submission in modal
+    document.getElementById('purchaseForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const quantity = document.getElementById('quantity').value;
+        console.log(`Quantity to purchase: ${quantity}`);
+        // Add logic to handle purchase
+        // Hide modal after purchase
+        const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+        purchaseModal.hide();
+    });
+
+loadDanhSachSanPham();
