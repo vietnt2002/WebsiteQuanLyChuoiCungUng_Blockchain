@@ -270,7 +270,7 @@ var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwL
     
                             const priceP = document.createElement('p');
                             priceP.className = 'price';
-                            priceP.textContent = `Price: ${price}`;
+                            priceP.textContent = `Price: ${price} Sol`;
                             contentDiv.appendChild(priceP);
     
                             const quantityP = document.createElement('p');
