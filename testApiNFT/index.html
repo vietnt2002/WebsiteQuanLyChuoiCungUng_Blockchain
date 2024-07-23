@@ -299,7 +299,6 @@
                         const quantityCell = row.insertCell(4);
                         const priceCell = row.insertCell(5);
                         const actionEditCell = row.insertCell(6);
-                        const actionDeleteCell = row.insertCell(7);
 
                         collectionNameCell.textContent = item.collection.name || 'Unknown Collection'; // Tên Collection
                         itemNameCell.textContent = item.name || 'Unknown Item'; // Tên Data
@@ -329,6 +328,12 @@
     }
 
     function updateNft() {
+        // Kiểm tra nếu không có itemId
+        if (!selectedItem) {
+            alert('Vui lòng chọn sản phẩm để sửa.');
+            return;
+        }
+
         const collectionId = document.getElementById('assetCollectionComboboxEdit').value;
         const name = document.getElementById('tenSanPhamEdit').value;
         const price = document.getElementById('giaBanEdit').value;
@@ -336,12 +341,12 @@
         const description = document.getElementById('moTaEdit').value;
         const imageUrl = document.getElementById('fileInputEdit').value;
 
-        const itemId = selectedItem.id; // Giả sử bạn đã lưu ID của mục được chọn vào biến selectedItem trước đó
+        const itemId = selectedItem.id; // ID của mục được chọn
         const updateN = {
             method: 'PUT',
             headers: {
                 accept: 'application/json',
-                'x-api-key': apiKey,
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJiMWIwNWFjNC1jNTUxLTQ2NjctYjk2OS0zZDZjZjkzZGQ0NjEiLCJzdWIiOiJiNTdhMjg1Ni1hMDU2LTQ3YjItYjc2Mi02YzFmZDVlOGJlNDQiLCJpYXQiOjE3MjEzMTkxNjJ9.lex6kIBaEIrQbiRzGNDvvQDZw1trjOy817GZ0se5inI',
                 'content-type': 'application/json'
             }
         };
@@ -361,18 +366,27 @@
             ...updateN,
             body: JSON.stringify(body)
         })
-            .then(response => response.json())
             .then(response => {
-                console.log(response);
-                // Cập nhật giao diện người dùng sau khi API trả về phản hồi thành công
-                alert("Update thành công")
-                loadDanhSachSanPham();
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Có lỗi xảy ra.');
+                    });
+                }
+                return response.json();
             })
-            .catch(err => console.error(err));
+            .then(data => {
+                console.log(data);
+                alert("Cập nhật sản phẩm thành công!");
+                loadDanhSachSanPham(); // Tải lại danh sách sản phẩm
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert(`Có lỗi xảy ra: ${err.message}`);
+            });
     }
 
-    let selectedItem = null; // Biến để lưu mục được chọn
 
+    let selectedItem = null; // Biến để lưu mục được chọn
     function editRow(item) {
         selectedItem = item; // Lưu mục được chọn vào biến
         document.getElementById('assetCollectionComboboxEdit').value = item.collection.id;
