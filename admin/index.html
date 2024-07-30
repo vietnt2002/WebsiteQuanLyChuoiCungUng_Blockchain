@@ -50,7 +50,7 @@
 <body class="container">
     <div class="card p-3 mb-3">
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <div id="assetCollectionForm">
                     <h4>Thêm danh mục sản phẩm</h4>
                     <label for="name">Name:</label>
@@ -62,18 +62,21 @@
                     <label for="imageUrl">Image URL:</label>
                     <input type="text" id="anhDanhMuc" name="anhDanhMuc" class="form-control mb-3" required>
 
-                    <button class="btn btn-primary" style="color: white;" onclick="addAssetCollection()">Add Collection</button>
+                    <button class="btn btn-primary" style="color: white;" onclick="addAssetCollection()">Add
+                        Collection</button>
 
                     <div id="message" class="mt-3"></div>
                 </div>
             </div>
-            <div class="col-6">
+
+            <div class="col-4">
                 <div class="d-flex justify-content-between">
                     <span>
                         <h4>Thêm sản phẩm NFT</h4>
                     </span>
                     <span>
-                        <button id="logoutButton" class="btn btn-info" style="color: white;" onclick="logout()">Logout</button>
+                        <button id="logoutButton" class="btn btn-info" style="color: white;"
+                            onclick="logout()">Logout</button>
                     </span>
                 </div>
                 <div class="mb-3">
@@ -110,9 +113,41 @@
 
                 <button class="btn btn-primary mt-3" style="color: white;" onclick="mintNft()">Add NFT</button>
             </div>
+
+            <div class="col col-4">
+                <div id="formEdit">
+                    <div class="mb-3">
+                        <label for="assetCollectionComboboxEdit">Chọn dòng sản phẩm:</label>
+                        <select id="assetCollectionComboboxEdit" class="form-control">
+                            <option value="">Chọn bộ sưu tập tài sản</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <span>Nhập tên sản phẩm: </span>
+                        <input type="text" name="tenSanPhamEdit" id="tenSanPhamEdit" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <span>Nhập giá bán: </span>
+                        <input type="number" name="giaBanEdit" id="giaBanEdit" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <span>Nhập số lượng: </span>
+                        <input type="number" name="soLuongEdit" id="soLuongEdit" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <span>Nhập mô tả: </span>
+                        <input type="text" id="moTaEdit" name="moTaEdit" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <span>Chọn ảnh: </span>
+                        <input type="text" name="fileInputEdit" id="fileInputEdit" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="updateNft()">Update NFT</button>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
-
 
 
     <div class="card p-2">

@@ -89,7 +89,7 @@ function mintNft() {
         .then(response => {
             console.log('Success:', response);
             alert('Mint NFT thành công!');
-            loadDanhSachSanPham();
+            addEventListener();
         })
         .catch(err => {
             console.error('Error:', err);
@@ -162,10 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const editBtn = document.createElement('button');
                     editBtn.className = 'btn btn-warning';
                     editBtn.innerHTML = '<i class="fa fa-edit"></i>';
-                    editBtn.addEventListener('click', () => {
-                        // Thêm hành động sửa sản phẩm ở đây
-                        alert(`Chỉnh sửa ${item.name}`);
-                    });
+                    editBtn.onclick = () => editRow(item);
 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'btn btn-danger';
@@ -218,6 +215,81 @@ function loadDanhMucSanPham() {
     });
 }
 
+
+let selectedItem = null; // Biến để lưu mục được chọn
+    function editRow(item) {
+        selectedItem = item; // Lưu mục được chọn vào biến
+        document.getElementById('assetCollectionComboboxEdit').value = item.collection.id;
+        document.getElementById('tenSanPhamEdit').value = item.name || '';
+        document.getElementById('giaBanEdit').value = item.attributes.find(attr => attr.traitType === 'GiaTien')?.value || '';
+        document.getElementById('soLuongEdit').value = item.attributes.find(attr => attr.traitType === 'SoLuong')?.value || '';
+        document.getElementById('moTaEdit').value = item.description || '';
+        document.getElementById('fileInputEdit').value = item.imageUrl || '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        addEventListener();
+        loadDanhMucSanPham();
+    });
+
+function updateNft() {
+    // Kiểm tra nếu không có itemId
+    if (!selectedItem) {
+        alert('Vui lòng chọn sản phẩm để sửa.');
+        return;
+    }
+
+    const collectionId = document.getElementById('assetCollectionComboboxEdit').value;
+    const name = document.getElementById('tenSanPhamEdit').value;
+    const price = document.getElementById('giaBanEdit').value;
+    const quantity = document.getElementById('soLuongEdit').value;
+    const description = document.getElementById('moTaEdit').value;
+    const imageUrl = document.getElementById('fileInputEdit').value;
+
+    const itemId = selectedItem.id; // ID của mục được chọn
+    const updateN = {
+        method: 'PUT',
+        headers: {
+            accept: 'application/json',
+            'x-api-key': apiKey,
+            'content-type': 'application/json'
+        }
+    };
+
+    const body = {
+        collectionId,
+        name,
+        attributes: [
+            { traitType: 'GiaTien', value: price },
+            { traitType: 'SoLuong', value: quantity }
+        ],
+        description,
+        imageUrl
+    };
+
+    fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
+        ...updateN,
+        body: JSON.stringify(body)
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Có lỗi xảy ra.');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            alert("Cập nhật sản phẩm thành công!");
+            addEventListener(); // Tải lại danh sách sản phẩm
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert(`Có lỗi xảy ra: ${err.message}`);
+        });
+}
+
 function logout() {
     // Xóa thông tin người dùng từ localStorage
     localStorage.removeItem('username');
@@ -229,4 +301,4 @@ function logout() {
 
 
 loadDanhMucSanPham();
-loadDanhSachSanPham();
+addEventListener();
