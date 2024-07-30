@@ -226,3 +226,7 @@ function logout() {
     // Chuyển hướng về trang đăng nhập hoặc trang chủ
     window.location.href = '../index.html'; // Thay đổi đường dẫn nếu cần
 }
+
+
+loadDanhMucSanPham();
+loadDanhSachSanPham();
