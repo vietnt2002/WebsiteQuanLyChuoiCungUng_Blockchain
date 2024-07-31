@@ -10,7 +10,6 @@ const options = {
 
 
 //Tạo Category
-
 function addAssetCollection() {
   const name = document.getElementById('tenDanhMuc').value;
   const description = document.getElementById('moTaDanhMuc').value;

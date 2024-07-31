@@ -299,12 +299,73 @@ var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwL
                 })
                 .catch(err => console.error(err));
         }
+
+        document.getElementById('purchaseForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
     
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('quantity').dataset.price;
+            const totalPrice = quantity * price;
+    
+            const walletAddress = localStorage.getItem('walletAddress');
+            console.log(walletAddress);
+            if (!walletAddress) {
+                alert('Wallet address not found. Please log in again.');
+                return;
+            }
+    
+            const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
+    
+            const provider = window.solana;
+            if (!provider || !provider.isPhantom) {
+                alert('Phantom Wallet is not installed.');
+                return;
+            }
+    
+            try {
+                // Connect to Phantom
+                await provider.connect();
+                const fromPubkey = new solanaWeb3.PublicKey(walletAddress);
+    
+                // Lấy recent blockhash
+                const { blockhash } = await connection.getRecentBlockhash();
+    
+                // Tạo giao dịch
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: fromPubkey,
+                        toPubkey: "FR3q2GB1hQBbikju99HNwkxZbJm2nDwyhfatKxTTRpNU",
+                        lamports: totalPrice * solanaWeb3.LAMPORTS_PER_SOL,
+                    })
+                );
+    
+                // Đặt blockhash và feePayer
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = fromPubkey;
+    
+                // Ký giao dịch
+                const signedTransaction = await provider.signTransaction(transaction);
+    
+                // Gửi giao dịch
+                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+                await connection.confirmTransaction(signature);
+    
+                console.log('Transaction successful!', signature);
+                alert('Transaction successful!');
+                location.reload();
+            } catch (error) {
+                if (error.message === 'User rejected the request.') {
+                    alert('Transaction rejected by the user.');
+                } else {
+                    console.error('Transaction failed', error);
+                    alert('Transaction failed. Please try again.');
+                }
+            }
+        });
         loadDanhSachSanPham();
     });
     
-    // Handle form submission in modal
-    document.getElementById('purchaseForm').addEventListener('submit', function(event) {
+    document.getElementById('purchaseForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const quantity = document.getElementById('quantity').value;
         console.log(`Quantity to purchase: ${quantity}`);
@@ -313,5 +374,6 @@ var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwL
         const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
         purchaseModal.hide();
     });
+    
 
 loadDanhSachSanPham();
