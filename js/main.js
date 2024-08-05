@@ -377,32 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-    document.addEventListener('click', async (event) => {
-        if (event.target.matches('.btn.border.border-secondary')) {
-            const itemId = event.target.getAttribute('data-item-id');
-    
-            if (itemId) {
-                try {
-                    const response = await fetch(`https://api.gameshift.dev/nx/items/${itemId}`, {
-                        method: 'GET',
-                        headers: {
-                            accept: 'application/json',
-                            'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8' // Thay thế với API key thực tế của bạn
-                        }
-                    });
-    
-                    const itemData = await response.json();
-                    console.log('Item data:', itemData);
-                } catch (err) {
-                    console.error('Error fetching item data:', err);
-                }
-            }
-        }
-    });
-
-    updateNft();
-    mintNft();
     loadDanhSachSanPham();
 });
 
@@ -411,14 +385,37 @@ document.getElementById('purchaseForm').addEventListener('submit', function (eve
     event.preventDefault();
     const quantity = document.getElementById('quantity').value;
     console.log(`Quantity to purchase: ${quantity}`);
+    updateNft(quantity);
+    mintNft(quantity);
     // Add logic to handle purchase
     // Hide modal after purchase
     const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
     purchaseModal.hide();
 });
 
+document.addEventListener('click', async (event) => {
+    if (event.target.matches('.btn.border.border-secondary')) {
+        const itemId = event.target.getAttribute('data-item-id');
+        if (itemId) {
+            try {
+                const response = await fetch(`https://api.gameshift.dev/nx/items/${itemId}`, {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                        'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8' // Thay thế với API key thực tế của bạn
+                    }
+                });
 
-function updateNft() {
+                const itemData = await response.json();
+                console.log('Item data:', itemData);
+            } catch (err) {
+                console.error('Error fetching item data:', err);
+            }
+        }
+    }
+});
+
+function updateNft(quantity ) {
     // Lấy số lượng từ ô input
     const inputQuantity = document.getElementById('quantity').value;
     const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8'; // Thay thế với API key thực tế của bạn
@@ -470,7 +467,7 @@ function updateNft() {
     .catch(err => console.error(err));
 }
 
-function mintNft() {
+function mintNft(quantity) {
     const destinationUserReferenceId = localStorage.getItem('username');
 
     if (!collectionId || !tenSanPham || !giaBan || !soLuong || !moTa || !fileInput) {
@@ -487,7 +484,7 @@ function mintNft() {
         },
         body: JSON.stringify({
             details: {
-                attributes: [{ traitType: 'GiaTien', value: giaBan }, { traitType: 'SoLuong', value: soLuong }],
+                attributes: [{ traitType: 'GiaTien', value: giaBan }, { traitType: 'SoLuong', value: quantity }],
                 collectionId: collectionId,
                 description: moTa,
                 imageUrl: fileInput,
