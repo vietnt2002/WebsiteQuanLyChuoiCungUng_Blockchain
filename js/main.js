@@ -195,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
 function logout() {
     // Xóa thông tin người dùng từ localStorage
     localStorage.removeItem('username');
@@ -205,175 +206,189 @@ function logout() {
 
 //load san pham 
 
-var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIxMDM1ZGExYi1hMGQ4LTRkODMtOTkzOC0zNTk4ZmEzZmMwOTEiLCJzdWIiOiIzNTVmZGNiMS0yOTRhLTQ0NjUtOTEwNS0wMDQ3OGQxYzFhMmMiLCJpYXQiOjE3MjI4MjI0MjB9.7UiLh24sJXQGJDwh3PVcC1nsI8cYBXOzbF24UFHSEiU";
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            'x-api-key': apiKey
-        }
-    };
+var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
+const options = {
+    method: 'GET',
+    headers: {
+        accept: 'application/json',
+        'x-api-key': apiKey
+    }
+};
 
-    document.addEventListener('DOMContentLoaded', () => {
-        function loadDanhSachSanPham() {
-            fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=1', options)
-                .then(response => response.json())
-                .then(response => {
-                    console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
-    
-                    const productContainer = document.getElementById('productContainer').querySelector('.row');
-                    productContainer.innerHTML = ''; // Xóa nội dung cũ
-    
-                    response.data.forEach(entry => {
-                        if (entry.type === "UniqueAsset") {
-                            const item = entry.item;
-    
-                            // Tạo thẻ card
-                            const colDiv = document.createElement('div');
-                            colDiv.className = 'col-md-6 col-lg-4 col-xl-3';
-    
-                            const cardDiv = document.createElement('div');
-                            cardDiv.className = 'rounded position-relative fruite-item';
-    
-                            const imgDiv = document.createElement('div');
-                            imgDiv.className = 'fruite-img';
-    
-                            const img = document.createElement('img');
-                            img.src = item.imageUrl || 'img/fruite-item-5.jpg';
-                            img.className = 'img-fluid w-100 rounded-top';
-                            img.alt = item.name || 'Image';
-                            imgDiv.appendChild(img);
-    
-                            const categoryDiv = document.createElement('div');
-                            categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
-                            categoryDiv.style.top = '10px';
-                            categoryDiv.style.left = '10px';
-                            categoryDiv.textContent = item.collection.name || 'Fruits';
-                            cardDiv.appendChild(categoryDiv);
-    
-                            const contentDiv = document.createElement('div');
-                            contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom product-details';
-    
-                            const itemName = document.createElement('h4');
-                            itemName.textContent = item.name || 'Unknown Item';
-                            contentDiv.appendChild(itemName);
-    
-                            const itemDescription = document.createElement('p');
-                            itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
-                            contentDiv.appendChild(itemDescription);
-    
-                            const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
-                            const quantity = soLuongAttribute ? soLuongAttribute.value : ' ';
-    
-                            const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
-                            const price = giaTienAttribute ? giaTienAttribute.value : ' ';
-    
-                            const priceP = document.createElement('p');
-                            priceP.className = 'price';
-                            priceP.textContent = `Price: ${price} Sol`;
-                            contentDiv.appendChild(priceP);
-    
-                            const quantityP = document.createElement('p');
-                            quantityP.className = 'quantity';
-                            quantityP.textContent = `Quantity: ${quantity}`;
-                            contentDiv.appendChild(quantityP);
-    
-                            const dFlexDiv = document.createElement('div');
-                            dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
-    
-                            const addToCartA = document.createElement('a');
-                            addToCartA.href = '#';
-                            addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
-                            addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Pay';
-                            addToCartA.setAttribute('data-bs-toggle', 'modal');
-                            addToCartA.setAttribute('data-bs-target', '#purchaseModal');
-                            dFlexDiv.appendChild(addToCartA);
-    
-                            contentDiv.appendChild(dFlexDiv);
-                            cardDiv.appendChild(imgDiv);
-                            cardDiv.appendChild(contentDiv);
-                            colDiv.appendChild(cardDiv);
-                            productContainer.appendChild(colDiv);
-                        }
+document.addEventListener('DOMContentLoaded', () => {
+    function loadDanhSachSanPham() {
+        fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=admin', options)
+            .then(response => response.json())
+            .then(response => {
+                console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
+
+                const productContainer = document.getElementById('productContainer').querySelector('.row');
+                productContainer.innerHTML = ''; // Xóa nội dung cũ
+
+                response.data.forEach(entry => {
+                    if (entry.type === "UniqueAsset") {
+                        const item = entry.item;
+
+                        // Tạo thẻ card
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'col-md-6 col-lg-4 col-xl-3 mt-3';
+
+                        const cardDiv = document.createElement('div');
+                        cardDiv.className = 'rounded position-relative fruite-item';
+
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'fruite-img';
+
+                        const img = document.createElement('img');
+                        img.src = item.imageUrl || 'img/fruite-item-5.jpg';
+                        img.className = 'img-fluid w-100 rounded-top';
+                        img.alt = item.name || 'Image';
+                        imgDiv.appendChild(img);
+
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
+                        categoryDiv.style.top = '10px';
+                        categoryDiv.style.left = '10px';
+                        categoryDiv.textContent = item.collection.name || 'Fruits';
+                        cardDiv.appendChild(categoryDiv);
+
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom product-details';
+
+                        const itemName = document.createElement('h4');
+                        itemName.textContent = item.name || 'Unknown Item';
+                        contentDiv.appendChild(itemName);
+
+                        const itemDescription = document.createElement('p');
+                        itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
+                        contentDiv.appendChild(itemDescription);
+
+                        const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
+                        const quantity = soLuongAttribute ? soLuongAttribute.value : ' ';
+
+                        const giaTienAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
+                        const price = giaTienAttribute ? giaTienAttribute.value : ' ';
+
+                        const priceP = document.createElement('p');
+                        priceP.className = 'price';
+                        priceP.textContent = `Price: ${price} Sol`;
+                        contentDiv.appendChild(priceP);
+
+                        const quantityP = document.createElement('p');
+                        quantityP.className = 'quantity';
+                        quantityP.textContent = `Quantity: ${quantity}`;
+                        contentDiv.appendChild(quantityP);
+
+                        const dFlexDiv = document.createElement('div');
+                        dFlexDiv.className = 'd-flex justify-content-between flex-lg-wrap';
+
+                        const addToCartA = document.createElement('a');
+                        addToCartA.href = '#';
+                        addToCartA.className = 'btn border border-secondary rounded-pill px-3 text-primary';
+                        addToCartA.innerHTML = '<i class="fa fa-shopping-bag me-2 text-primary"></i> Pay';
+                        addToCartA.setAttribute('data-bs-toggle', 'modal');
+                        addToCartA.setAttribute('data-bs-target', '#purchaseModal');
+                        addToCartA.setAttribute('data-quantity', quantity);
+                        addToCartA.setAttribute('data-price', price);
+                        dFlexDiv.appendChild(addToCartA);
+
+                        contentDiv.appendChild(dFlexDiv);
+                        cardDiv.appendChild(imgDiv);
+                        cardDiv.appendChild(contentDiv);
+                        colDiv.appendChild(cardDiv);
+                        productContainer.appendChild(colDiv);
+                    }
+                });
+                // Thêm sự kiện lắng nghe khi modal mở
+                document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
+                    btn.addEventListener('click', (event) => {
+                        const maxQuantity = event.target.getAttribute('data-quantity');
+                        const price = event.target.getAttribute('data-price');
+                        document.getElementById('quantity').max = maxQuantity;
+                        document.getElementById('quantity').dataset.price = price; // Lưu giá bán vào input
                     });
-                })
-                .catch(err => console.error(err));
+                });
+            })
+            .catch(err => console.error(err));
+    }
+
+    // Thêm sự kiện lắng nghe cho form submit
+    document.getElementById('purchaseForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const quantity = document.getElementById('quantity').value;
+        const price = document.getElementById('quantity').dataset.price;
+        const totalPrice = quantity * price;
+
+        const walletAddress = localStorage.getItem('walletAddress');
+        console.log(walletAddress);
+        if (!walletAddress) {
+            alert('Wallet address not found. Please log in again.');
+            return;
         }
 
-        document.getElementById('purchaseForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-    
-            const quantity = document.getElementById('quantity').value;
-            const price = document.getElementById('quantity').dataset.price;
-            const totalPrice = quantity * price;
-    
-            const walletAddress = localStorage.getItem('walletAddress');
-            console.log(walletAddress);
-            if (!walletAddress) {
-                alert('Wallet address not found. Please log in again.');
-                return;
+        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
+
+        const provider = window.solana;
+        if (!provider || !provider.isPhantom) {
+            alert('Phantom Wallet is not installed.');
+            return;
+        }
+
+        try {
+            // Connect to Phantom
+            await provider.connect();
+            const fromPubkey = new solanaWeb3.PublicKey(walletAddress);
+            const toPubkey = provider.publicKey;
+
+            // Lấy recent blockhash
+            const { blockhash } = await connection.getRecentBlockhash();
+
+            // Tạo giao dịch
+            const transaction = new solanaWeb3.Transaction().add(
+                solanaWeb3.SystemProgram.transfer({
+                    fromPubkey: fromPubkey,
+                    toPubkey: toPubkey,
+                    lamports: totalPrice * solanaWeb3.LAMPORTS_PER_SOL,
+                })
+            );
+
+            // Đặt blockhash và feePayer
+            transaction.recentBlockhash = blockhash;
+            transaction.feePayer = fromPubkey;
+
+            // Ký giao dịch
+            const signedTransaction = await provider.signTransaction(transaction);
+
+            // Gửi giao dịch
+            const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+            await connection.confirmTransaction(signature);
+
+            console.log('Transaction successful!', signature);
+            alert('Transaction successful!');
+            location.reload();
+        } catch (error) {
+            if (error.message === 'User rejected the request.') {
+                alert('Transaction rejected by the user.');
+            } else {
+                console.error('Transaction failed', error);
+                alert('Transaction failed. Please try again.');
             }
-    
-            const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
-    
-            const provider = window.solana;
-            if (!provider || !provider.isPhantom) {
-                alert('Phantom Wallet is not installed.');
-                return;
-            }
-    
-            try {
-                // Connect to Phantom
-                await provider.connect();
-                const fromPubkey = new solanaWeb3.PublicKey(walletAddress);
-    
-                // Lấy recent blockhash
-                const { blockhash } = await connection.getRecentBlockhash();
-    
-                // Tạo giao dịch
-                const transaction = new solanaWeb3.Transaction().add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: fromPubkey,
-                        toPubkey: "FR3q2GB1hQBbikju99HNwkxZbJm2nDwyhfatKxTTRpNU",
-                        lamports: totalPrice * solanaWeb3.LAMPORTS_PER_SOL,
-                    })
-                );
-    
-                // Đặt blockhash và feePayer
-                transaction.recentBlockhash = blockhash;
-                transaction.feePayer = fromPubkey;
-    
-                // Ký giao dịch
-                const signedTransaction = await provider.signTransaction(transaction);
-    
-                // Gửi giao dịch
-                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-                await connection.confirmTransaction(signature);
-    
-                console.log('Transaction successful!', signature);
-                alert('Transaction successful!');
-                location.reload();
-            } catch (error) {
-                if (error.message === 'User rejected the request.') {
-                    alert('Transaction rejected by the user.');
-                } else {
-                    console.error('Transaction failed', error);
-                    alert('Transaction failed. Please try again.');
-                }
-            }
-        });
-        loadDanhSachSanPham();
+        }
     });
-    
-    document.getElementById('purchaseForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        const quantity = document.getElementById('quantity').value;
-        console.log(`Quantity to purchase: ${quantity}`);
-        // Add logic to handle purchase
-        // Hide modal after purchase
-        const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
-        purchaseModal.hide();
-    });
-    
+
+    loadDanhSachSanPham();
+});
+
+// Handle form submission in modal
+document.getElementById('purchaseForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const quantity = document.getElementById('quantity').value;
+    console.log(`Quantity to purchase: ${quantity}`);
+    // Add logic to handle purchase
+    // Hide modal after purchase
+    const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+    purchaseModal.hide();
+});
 
 loadDanhSachSanPham();
