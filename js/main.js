@@ -204,12 +204,12 @@ function logout() {
     window.location.href = '../index.html';
 }
 
-var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
+var API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
 const options = {
     method: 'GET',
     headers: {
         accept: 'application/json',
-        'x-api-key': apiKey
+        'x-api-key': API_KEY
     }
 };
 
@@ -334,14 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             await provider.connect();
             const fromPubkey = new solanaWeb3.PublicKey(walletAddress);
-            const toPubkey = provider.publicKey;
 
             const { blockhash } = await connection.getRecentBlockhash();
 
             const transaction = new solanaWeb3.Transaction().add(
                 solanaWeb3.SystemProgram.transfer({
                     fromPubkey: fromPubkey,
-                    toPubkey: toPubkey,
+                    toPubkey: "FR3q2GB1hQBbikju99HNwkxZbJm2nDwyhfatKxTTRpNU",
                     lamports: totalPrice * solanaWeb3.LAMPORTS_PER_SOL,
                 })
             );
@@ -358,10 +357,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Transaction successful!');
 
             updateNftQuantity(itemId, quantity);
-
             mintNft(itemId, quantity);
 
-            location.reload();
+            // location.reload();
         } catch (error) {
             if (error.message === 'User rejected the request.') {
                 alert('Transaction rejected by the user.');
@@ -375,12 +373,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loadDanhSachSanPham();
 });
 
+
 function updateNftQuantity(itemId, purchasedQuantity) {
-    fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
+    fetch(`https://api.gameshift.dev/nx/items/${itemId}`, {
         method: 'GET',
         headers: {
             accept: 'application/json',
-            'x-api-key': apiKey
+            'x-api-key': API_KEY
         }
     })
     .then(response => response.json())
@@ -405,7 +404,7 @@ function updateNftQuantity(itemId, purchasedQuantity) {
             method: 'PUT',
             headers: {
                 accept: 'application/json',
-                'x-api-key': apiKey,
+                'x-api-key': API_KEY,
                 'content-type': 'application/json'
             },
             body: JSON.stringify(updateBody)
@@ -419,11 +418,11 @@ function updateNftQuantity(itemId, purchasedQuantity) {
 }
 
 function mintNft(itemId, quantity) {
-    fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
+    fetch(`https://api.gameshift.dev/nx/items/${itemId}`, {
         method: 'GET',
         headers: {
             accept: 'application/json',
-            'x-api-key': apiKey
+            'x-api-key': API_KEY
         }
     })
     .then(response => response.json())
@@ -446,14 +445,14 @@ function mintNft(itemId, quantity) {
             method: 'POST',
             headers: {
                 accept: 'application/json',
-                'x-api-key': apiKey,
+                'x-api-key': API_KEY,
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
                 details: {
                     attributes: [
                         { traitType: 'GiaTien', value: giaBan },
-                        { traitType: 'SoLuong', value: soLuong }
+                        { traitType: 'SoLuong', value: quantity }
                     ],
                     collectionId: collectionId,
                     description: moTa,
