@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'https://api.gameshift.dev/nx/users';
-    const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8';
+    const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIxMDM1ZGExYi1hMGQ4LTRkODMtOTkzOC0zNTk4ZmEzZmMwOTEiLCJzdWIiOiIzNTVmZGNiMS0yOTRhLTQ0NjUtOTEwNS0wMDQ3OGQxYzFhMmMiLCJpYXQiOjE3MjI4MjI0MjB9.7UiLh24sJXQGJDwh3PVcC1nsI8cYBXOzbF24UFHSEiU';
     let publicKey = '';
 
     const connectWallet = async () => {
