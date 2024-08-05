@@ -204,8 +204,6 @@ function logout() {
     window.location.href = '../index.html';
 }
 
-//load san pham 
-
 var apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8";
 const options = {
     method: 'GET',
@@ -220,45 +218,41 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('https://api.gameshift.dev/nx/items?page=1&perPage=9&ownerReferenceId=admin', options)
             .then(response => response.json())
             .then(response => {
-                console.log(response); // In ra dữ liệu để kiểm tra cấu trúc
-
                 const productContainer = document.getElementById('productContainer').querySelector('.row');
-                productContainer.innerHTML = ''; // Xóa nội dung cũ
+                productContainer.innerHTML = '';
 
                 response.data.forEach(entry => {
                     if (entry.type === "UniqueAsset") {
                         const item = entry.item;
-
-                        // Tạo thẻ card
                         const colDiv = document.createElement('div');
                         colDiv.className = 'col-md-6 col-lg-4 col-xl-3 mt-3';
-
+                        
                         const cardDiv = document.createElement('div');
                         cardDiv.className = 'rounded position-relative fruite-item';
-
+                        
                         const imgDiv = document.createElement('div');
                         imgDiv.className = 'fruite-img';
-
+                        
                         const img = document.createElement('img');
                         img.src = item.imageUrl || 'img/fruite-item-5.jpg';
                         img.className = 'img-fluid w-100 rounded-top';
                         img.alt = item.name || 'Image';
                         imgDiv.appendChild(img);
-
+                        
                         const categoryDiv = document.createElement('div');
                         categoryDiv.className = 'text-white bg-secondary px-3 py-1 rounded position-absolute';
                         categoryDiv.style.top = '10px';
                         categoryDiv.style.left = '10px';
                         categoryDiv.textContent = item.collection.name || 'Fruits';
                         cardDiv.appendChild(categoryDiv);
-
+                        
                         const contentDiv = document.createElement('div');
                         contentDiv.className = 'p-4 border border-secondary border-top-0 rounded-bottom product-details';
-
+                        
                         const itemName = document.createElement('h4');
                         itemName.textContent = item.name || 'Unknown Item';
                         contentDiv.appendChild(itemName);
-
+                        
                         const itemDescription = document.createElement('p');
                         itemDescription.textContent = item.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt';
                         contentDiv.appendChild(itemDescription);
@@ -300,29 +294,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         productContainer.appendChild(colDiv);
                     }
                 });
-                // Thêm sự kiện lắng nghe khi modal mở
+
                 document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
                     btn.addEventListener('click', (event) => {
                         const maxQuantity = event.target.getAttribute('data-quantity');
                         const price = event.target.getAttribute('data-price');
+                        const itemId = event.target.getAttribute('data-item-id');
                         document.getElementById('quantity').max = maxQuantity;
-                        document.getElementById('quantity').dataset.price = price; // Lưu giá bán vào input
+                        document.getElementById('quantity').dataset.price = price;
+                        document.getElementById('quantity').dataset.itemId = itemId;
                     });
                 });
             })
             .catch(err => console.error(err));
     }
 
-    // Thêm sự kiện lắng nghe cho form submit
     document.getElementById('purchaseForm').addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const quantity = document.getElementById('quantity').value;
         const price = document.getElementById('quantity').dataset.price;
+        const itemId = document.getElementById('quantity').dataset.itemId;
         const totalPrice = quantity * price;
 
         const walletAddress = localStorage.getItem('walletAddress');
-        console.log(walletAddress);
         if (!walletAddress) {
             alert('Wallet address not found. Please log in again.');
             return;
@@ -337,15 +332,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Connect to Phantom
             await provider.connect();
             const fromPubkey = new solanaWeb3.PublicKey(walletAddress);
             const toPubkey = provider.publicKey;
 
-            // Lấy recent blockhash
             const { blockhash } = await connection.getRecentBlockhash();
 
-            // Tạo giao dịch
             const transaction = new solanaWeb3.Transaction().add(
                 solanaWeb3.SystemProgram.transfer({
                     fromPubkey: fromPubkey,
@@ -354,19 +346,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             );
 
-            // Đặt blockhash và feePayer
             transaction.recentBlockhash = blockhash;
             transaction.feePayer = fromPubkey;
 
-            // Ký giao dịch
             const signedTransaction = await provider.signTransaction(transaction);
 
-            // Gửi giao dịch
             const signature = await connection.sendRawTransaction(signedTransaction.serialize());
             await connection.confirmTransaction(signature);
 
             console.log('Transaction successful!', signature);
             alert('Transaction successful!');
+
+            updateNftQuantity(itemId, quantity);
+
+            mintNft(itemId, quantity);
+
             location.reload();
         } catch (error) {
             if (error.message === 'User rejected the request.') {
@@ -377,50 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
     loadDanhSachSanPham();
 });
 
-// Handle form submission in modal
-document.getElementById('purchaseForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const quantity = document.getElementById('quantity').value;
-    console.log(`Quantity to purchase: ${quantity}`);
-    updateNft(quantity);
-    mintNft(quantity);
-    // Add logic to handle purchase
-    // Hide modal after purchase
-    const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
-    purchaseModal.hide();
-});
-
-document.addEventListener('click', async (event) => {
-    if (event.target.matches('.btn.border.border-secondary')) {
-        const itemId = event.target.getAttribute('data-item-id');
-        if (itemId) {
-            try {
-                const response = await fetch(`https://api.gameshift.dev/nx/items/${itemId}`, {
-                    method: 'GET',
-                    headers: {
-                        accept: 'application/json',
-                        'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8' // Thay thế với API key thực tế của bạn
-                    }
-                });
-
-                const itemData = await response.json();
-                console.log('Item data:', itemData);
-            } catch (err) {
-                console.error('Error fetching item data:', err);
-            }
-        }
-    }
-});
-
-function updateNft(quantity ) {
-    // Lấy số lượng từ ô input
-    const inputQuantity = document.getElementById('quantity').value;
-    const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIwYzQ0MTJhMS04YjEwLTQyNGEtOTE3Ni02ZjZmOThiMjkzNDUiLCJzdWIiOiI0ZTQ2OTE3My1kODUzLTRkNjItYjhjZi0xYWNiMmUzMzQ4ODEiLCJpYXQiOjE3MjE2MjA4OTN9.Ib8MYJ2mi3azi0u2DXMOKw1QYmQyIi0wlRZMI5MGVc8'; // Thay thế với API key thực tế của bạn
-
-    // Lấy thông tin hiện tại của NFT
+function updateNftQuantity(itemId, purchasedQuantity) {
     fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
         method: 'GET',
         headers: {
@@ -433,12 +388,10 @@ function updateNft(quantity ) {
         const currentQuantityAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
         const currentQuantity = currentQuantityAttribute ? parseInt(currentQuantityAttribute.value) : 0;
 
-        // Tính toán số lượng mới
-        const newQuantity = currentQuantity - parseInt(inputQuantity);
+        const newQuantity = currentQuantity - parseInt(purchasedQuantity);
 
-        // Tạo đối tượng body để cập nhật
         const updateBody = {
-            collectionId: item.collectionId, // Thay thế với giá trị thực tế
+            collectionId: item.collectionId,
             name: item.name,
             attributes: [
                 { traitType: 'GiaTien', value: item.attributes.find(attr => attr.traitType === 'GiaTien')?.value || 'N/A' },
@@ -448,7 +401,6 @@ function updateNft(quantity ) {
             imageUrl: item.imageUrl
         };
 
-        // Gửi yêu cầu PUT để cập nhật số lượng
         return fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
             method: 'PUT',
             headers: {
@@ -461,57 +413,74 @@ function updateNft(quantity ) {
     })
     .then(response => response.json())
     .then(response => {
-        console.log(response);
-        loadDanhSachSanPham(); // Cập nhật giao diện người dùng sau khi API trả về phản hồi thành công
+        console.log('Updated item:', response);
     })
-    .catch(err => console.error(err));
+    .catch(err => console.error('Error updating item:', err));
 }
 
-function mintNft(quantity) {
-    const destinationUserReferenceId = localStorage.getItem('username');
-
-    if (!collectionId || !tenSanPham || !giaBan || !soLuong || !moTa || !fileInput) {
-        alert("Vui lòng nhập đầy đủ thông tin!");
-        return;
-    }
-
-    const addNFT = {
-        method: 'POST',
+function mintNft(itemId, quantity) {
+    fetch(`https://api.gameshift.dev/nx/unique-assets/${itemId}`, {
+        method: 'GET',
         headers: {
             accept: 'application/json',
-            'x-api-key': apiKey,
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify({
-            details: {
-                attributes: [{ traitType: 'GiaTien', value: giaBan }, { traitType: 'SoLuong', value: quantity }],
-                collectionId: collectionId,
-                description: moTa,
-                imageUrl: fileInput,
-                name: tenSanPham
+            'x-api-key': apiKey
+        }
+    })
+    .then(response => response.json())
+    .then(item => {
+        const collectionId = item.collectionId;
+        const tenSanPham = item.name;
+        const giaBanAttribute = item.attributes.find(attr => attr.traitType === 'GiaTien');
+        const giaBan = giaBanAttribute ? giaBanAttribute.value : 'N/A';
+        const soLuongAttribute = item.attributes.find(attr => attr.traitType === 'SoLuong');
+        const soLuong = soLuongAttribute ? soLuongAttribute.value : 'N/A';
+        const moTa = item.description;
+        const fileInput = item.imageUrl;
+
+        if (!collectionId || !tenSanPham || !giaBan || !soLuong || !moTa || !fileInput) {
+            alert("Không thể lấy thông tin NFT!");
+            return;
+        }
+
+        const addNFT = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'x-api-key': apiKey,
+                'content-type': 'application/json'
             },
-            destinationUserReferenceId: destinationUserReferenceId
-        })
-    };
+            body: JSON.stringify({
+                details: {
+                    attributes: [
+                        { traitType: 'GiaTien', value: giaBan },
+                        { traitType: 'SoLuong', value: soLuong }
+                    ],
+                    collectionId: collectionId,
+                    description: moTa,
+                    imageUrl: fileInput,
+                    name: tenSanPham
+                },
+                destinationUserReferenceId: 'admin'
+            })
+        };
 
-    fetch('https://api.gameshift.dev/nx/unique-assets', addNFT)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(response => {
-            console.log('Success:', response);
-            alert('Mint NFT thành công!');
-            loadDanhSachSanPham();
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            alert('Đã xảy ra lỗi khi mint NFT!');
-        });
+        return fetch('https://api.gameshift.dev/nx/unique-assets', addNFT);
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(response => {
+        console.log('Success:', response);
+        alert('Mint NFT thành công!');
+        loadDanhSachSanPham();
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('Đã xảy ra lỗi khi mint NFT!');
+    });
+    
+    console.log(`Minting ${quantity} of item ${itemId} to buyer's wallet`);
 }
-//lấy sản phẩm
-
-
-loadDanhSachSanPham();
