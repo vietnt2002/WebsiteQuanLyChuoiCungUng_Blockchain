@@ -45,7 +45,7 @@ function addAssetCollection() {
 
 //Tạo NFT
 function mintNft() {
-    const collectionId = document.getElementById('assetCollectionCombobox').value;
+    const collectionId = document.getElementById('assetCollectionComboboxAdd').value;
     const tenSanPham = document.getElementById('tenSanPham').value;
     const giaBan = document.getElementById('giaBan').value;
     const soLuong = document.getElementById('soLuong').value;
@@ -154,6 +154,7 @@ function loadDanhSachSanPham() {
 
 function updateNft() {
     const collectionId = document.getElementById('assetCollectionComboboxEdit').value;
+    console.log(collectionId);
     const name = document.getElementById('tenSanPhamEdit').value;
     const price = document.getElementById('giaBanEdit').value;
     const quantity = document.getElementById('soLuongEdit').value;
